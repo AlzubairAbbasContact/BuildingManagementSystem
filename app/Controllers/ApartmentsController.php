@@ -8,10 +8,12 @@ use App\Core\Validator;
 
 class ApartmentsController extends Controller {
     private $apartmentModel;
+    private $tenantModel;
 
     public function __construct() {
         Session::requireLogin();
         $this->apartmentModel = $this->model('Apartment');
+        $this->tenantModel = $this->model('Tenant');
     }
 
     public function index() {
@@ -82,11 +84,19 @@ class ApartmentsController extends Controller {
     }
 
     public function delete($id) {
+        // Prevent marking as vacant if there are active tenants assigned
+        $activeCount = $this->tenantModel->countActiveByApartment($id);
+        if ($activeCount > 0) {
+            Session::flash('apartment_msg', 'لا يمكن جعل الشقة شاغرة بينما هناك مستأجر نشط مرتبط بها');
+            $this->redirect('apartments');
+            return;
+        }
+
         if ($this->apartmentModel->deleteApartment($id)) {
-            Session::flash('apartment_msg', 'تم حذف الشقة بنجاح');
+            Session::flash('apartment_msg', 'تم تحديث حالة الشقة إلى شاغرة');
             $this->redirect('apartments');
         } else {
-            die('خطأ في الحذف');
+            die('خطأ في تحديث الحالة');
         }
     }
 }

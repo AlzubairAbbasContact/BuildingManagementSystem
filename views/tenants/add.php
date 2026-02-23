@@ -38,7 +38,8 @@
 
                 <div class="form-group">
                     <label>قيمة الإيجار الشهري</label>
-                    <input type="number" name="rent_amount" class="form-control" value="<?php echo $data['rent_amount']; ?>" min="1" required>
+                    <input type="text" name="rent_amount" class="form-control <?php echo (!empty($data['rent_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['rent_amount']; ?>" required>
+                     <span class="invalid-feedback"><?php echo $data['rent_err']; ?></span>
                 </div>
 
                 <div class="form-group">

@@ -38,7 +38,8 @@ class Apartment extends Model {
     }
 
     public function deleteApartment($id) {
-        $this->db->query('DELETE FROM apartments WHERE id = :id');
+        // Soft-delete behavior: mark apartment as vacant instead of hard delete
+        $this->db->query('UPDATE apartments SET status = "vacant" WHERE id = :id');
         $this->db->bind(':id', $id);
         return $this->db->execute();
     }

@@ -40,7 +40,7 @@
                                 <td><?php echo $tenant->start_date; ?></td>
                                 <td><?php echo $tenant->end_date; ?></td>
                                 <td>
-                                    <a href="<?php echo URL_ROOT; ?>/tenants/delete/<?php echo $tenant->id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟ سيتم حذف جميع المدفوعات المرتبطة.');">حذف</a>
+                                    <a href="<?php echo URL_ROOT; ?>/tenants/delete/<?php echo $tenant->id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من إنهاء عقد هذا المستأجر؟ سيتم الاحتفاظ بسجل المدفوعات.');">إنهاء العقد</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

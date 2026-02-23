@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 27, 2026 at 02:05 AM
--- Server version: 10.4.32-MariaDB
+-- Generation Time: 23 فبراير 2026 الساعة 02:35
+-- إصدار الخادم: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `apartments`
+-- بنية الجدول `apartments`
 --
 
 CREATE TABLE `apartments` (
@@ -37,18 +37,19 @@ CREATE TABLE `apartments` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `apartments`
+-- إرجاع أو استيراد بيانات الجدول `apartments`
 --
 
 INSERT INTO `apartments` (`id`, `apartment_number`, `floor`, `status`, `notes`, `created_at`) VALUES
-(2, '2', 1, 'occupied', 'هاهاهي', '2026-01-26 22:01:18'),
-(6, '1', 1, 'occupied', '', '2026-01-26 23:34:03'),
-(7, '3', 1, 'occupied', '', '2026-01-27 00:06:58');
+(2, '2', 1, 'vacant', 'هاهاهي', '2026-01-26 22:01:18'),
+(10, '1', 1, 'occupied', '', '2026-02-22 21:36:47'),
+(11, '1', 3, 'vacant', '', '2026-02-22 23:56:18'),
+(12, '2', 2, 'vacant', '', '2026-02-23 00:42:23');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `payments`
+-- بنية الجدول `payments`
 --
 
 CREATE TABLE `payments` (
@@ -58,22 +59,28 @@ CREATE TABLE `payments` (
   `amount_remaining` decimal(10,2) DEFAULT 0.00,
   `payment_date` date NOT NULL,
   `notes` mediumtext DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('active','canceled') NOT NULL DEFAULT 'active',
+  `cancellation_reason` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `payments`
+-- إرجاع أو استيراد بيانات الجدول `payments`
 --
 
-INSERT INTO `payments` (`id`, `tenant_id`, `amount_paid`, `amount_remaining`, `payment_date`, `notes`, `created_at`) VALUES
-(4, 2, 10.00, 69990.00, '2026-01-27', 'جيب', '2026-01-26 23:23:14'),
-(5, 4, 20000.00, 30000.00, '2026-01-27', 'كريمي', '2026-01-27 00:10:18'),
-(6, 4, 10000.00, 40000.00, '2026-01-27', '%%%%', '2026-01-27 00:10:51');
+INSERT INTO `payments` (`id`, `tenant_id`, `amount_paid`, `amount_remaining`, `payment_date`, `notes`, `created_at`, `status`, `cancellation_reason`) VALUES
+(10, 8, 1.00, 99999.00, '2026-02-22', '', '2026-02-22 22:53:03', 'canceled', NULL),
+(12, 9, 10000.00, 0.00, '2026-02-23', '', '2026-02-22 23:57:33', 'canceled', 'المستاجر خرج'),
+(13, 9, 10000.00, 0.00, '2026-02-23', '', '2026-02-22 23:57:46', 'canceled', NULL),
+(14, 9, 10.00, 0.00, '2026-02-23', 'جيب', '2026-02-23 00:12:48', 'canceled', NULL),
+(15, 10, 20000.00, 0.00, '2026-02-23', 'كريمي', '2026-02-23 00:18:58', 'canceled', 'غلط في ادخال البيانات'),
+(16, 13, 4000.00, 0.00, '2026-02-23', '', '2026-02-23 00:41:36', 'canceled', 'كانت قطع وبطل'),
+(17, 14, 20000.00, 0.00, '2026-02-23', '', '2026-02-23 00:56:47', 'active', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tenants`
+-- بنية الجدول `tenants`
 --
 
 CREATE TABLE `tenants` (
@@ -85,22 +92,27 @@ CREATE TABLE `tenants` (
   `rent_amount` decimal(10,2) NOT NULL,
   `start_date` date NOT NULL,
   `end_date` date NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('active','inactive') NOT NULL DEFAULT 'active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tenants`
+-- إرجاع أو استيراد بيانات الجدول `tenants`
 --
 
-INSERT INTO `tenants` (`id`, `apartment_id`, `name`, `phone`, `nid`, `rent_amount`, `start_date`, `end_date`, `created_at`) VALUES
-(2, 2, 'alzi', '777777777', '110110110110', 70000.00, '2026-01-27', '2027-01-27', '2026-01-26 22:14:43'),
-(4, 7, 'الزبير', '777777777', '110110110110', 50000.00, '2026-01-27', '2026-01-27', '2026-01-27 00:08:05'),
-(5, 6, 'محمد', '777777777', '110110110110', 20000.00, '2026-01-27', '2026-01-27', '2026-01-27 00:12:12');
+INSERT INTO `tenants` (`id`, `apartment_id`, `name`, `phone`, `nid`, `rent_amount`, `start_date`, `end_date`, `created_at`, `status`) VALUES
+(8, 2, 'محمد', '777777777', '1111111111', 100000.00, '2026-02-22', '2026-02-22', '2026-02-22 22:50:31', 'inactive'),
+(9, 10, 'محمد', '777777777', '1111111111', 100000.00, '2026-02-22', '2026-02-22', '2026-02-22 23:56:43', 'inactive'),
+(10, 10, 'علي', '777777777', '1111111111', 50000.00, '2026-02-22', '2026-02-22', '2026-02-23 00:17:06', 'inactive'),
+(11, 10, 'علي علي', '777777777', '1111111111', 20000.00, '2026-02-22', '2026-02-22', '2026-02-23 00:20:07', 'inactive'),
+(12, 10, 'علي علي علي', '777777777', '1111111111', 800000.00, '2026-02-22', '2026-02-22', '2026-02-23 00:27:00', 'inactive'),
+(13, 10, 'علي علي علي', '777777777', '1111111111', 20000.00, '2026-02-22', '2026-02-22', '2026-02-23 00:40:11', 'inactive'),
+(14, 10, 'علي علي علي', '777777777', '1111111111', 20000.00, '2026-02-22', '2026-02-22', '2026-02-23 00:56:20', 'active');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `users`
+-- بنية الجدول `users`
 --
 
 CREATE TABLE `users` (
@@ -116,7 +128,7 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `users`
+-- إرجاع أو استيراد بيانات الجدول `users`
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `image`, `created_at`, `role`, `is_active`) VALUES
@@ -163,19 +175,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `apartments`
 --
 ALTER TABLE `apartments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `tenants`
 --
 ALTER TABLE `tenants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -184,20 +196,20 @@ ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
--- Constraints for dumped tables
+-- قيود الجداول المُلقاة.
 --
 
 --
--- Constraints for table `payments`
+-- قيود الجداول `payments`
 --
 ALTER TABLE `payments`
-  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`tenant_id`) REFERENCES `tenants` (`id`);
 
 --
--- Constraints for table `tenants`
+-- قيود الجداول `tenants`
 --
 ALTER TABLE `tenants`
-  ADD CONSTRAINT `tenants_ibfk_1` FOREIGN KEY (`apartment_id`) REFERENCES `apartments` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `tenants_ibfk_1` FOREIGN KEY (`apartment_id`) REFERENCES `apartments` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

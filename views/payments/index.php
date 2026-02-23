@@ -18,7 +18,8 @@
                     <tr>
                         <th>المستأجر</th>
                         <th>المبلغ المدفوع</th>
-                        <th>المتبقي</th>
+                        <th>المتبقي (ديناميك)</th>
+                        <th>حالة الدفعة</th>
                         <th>تاريخ الدفع</th>
                         <th>ملاحظات</th>
                         <th>إجراءات</th>
@@ -32,13 +33,23 @@
                             <tr>
                                 <td><?php echo $payment->tenant_name; ?></td>
                                 <td><?php echo number_format($payment->amount_paid); ?></td>
-                                <td style="<?php echo ($payment->amount_remaining > 0) ? 'color: red; font-weight: bold;' : 'color: green;'; ?>">
-                                    <?php echo number_format($payment->amount_remaining); ?>
+                                <td style="<?php echo ($payment->remaining > 0) ? 'color: red; font-weight: bold;' : 'color: green;'; ?>">
+                                    <?php echo number_format($payment->remaining); ?>
+                                </td>
+                                <td>
+                                    <?php echo isset($payment->status) && $payment->status === 'canceled' ? 'ملغاة' : 'نشطة'; ?>
+                                    <?php if(!empty($payment->cancellation_reason)): ?>
+                                        <div class="text-muted small">سبب: <?php echo htmlspecialchars($payment->cancellation_reason); ?></div>
+                                    <?php endif; ?>
                                 </td>
                                 <td><?php echo $payment->payment_date; ?></td>
                                 <td><?php echo $payment->notes; ?></td>
                                 <td>
-                                    <a href="<?php echo URL_ROOT; ?>/payments/delete/<?php echo $payment->id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟');">حذف</a>
+                                    <?php if(!isset($payment->status) || $payment->status !== 'canceled'): ?>
+                                        <a href="<?php echo URL_ROOT; ?>/payments/cancel/<?php echo $payment->id; ?>" class="btn btn-sm btn-danger">إلغاء</a>
+                                    <?php else: ?>
+                                        <span class="text-muted">—</span>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

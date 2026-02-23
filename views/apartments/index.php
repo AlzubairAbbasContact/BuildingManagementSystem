@@ -40,8 +40,8 @@
                                 </td>
                                 <td><?php echo $apartment->notes; ?></td>
                                 <td>
-                                    <!-- Edit could be implemented similar to Add -->
-                                    <a href="<?php echo URL_ROOT; ?>/apartments/delete/<?php echo $apartment->id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟');">حذف</a>
+                                    <!-- Soft action: mark apartment as vacant instead of hard delete -->
+                                    <a href="<?php echo URL_ROOT; ?>/apartments/delete/<?php echo $apartment->id; ?>" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من جعل هذه الشقة شاغرة؟ هذا لن يحذف السجل.');">تعيين شاغرة</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

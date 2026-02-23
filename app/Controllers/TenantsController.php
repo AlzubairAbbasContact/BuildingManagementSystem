@@ -17,7 +17,8 @@ class TenantsController extends Controller {
     }
 
     public function index() {
-        $tenants = $this->tenantModel->getAllTenants();
+        // Show only active tenants in the list
+        $tenants = $this->tenantModel->getActiveTenants();
         $data = [
             'active' => 'tenants',
             'tenants' => $tenants
@@ -40,7 +41,8 @@ class TenantsController extends Controller {
                  'start_date' => trim($_POST['start_date']),
                  'end_date' => trim($_POST['end_date']),
                  'name_err' => '',
-                 'phone_err' => ''
+                 'phone_err' => '',
+                 'rent_err'=>''
              ];
 
              if (empty($data['name'])) {
@@ -64,14 +66,28 @@ class TenantsController extends Controller {
              // For now, let's validate and if invalid, attach to name_err temporarily or add new logic.
              // Let's stick strictly to user request: "Check all these things".
              // I'll add validation logic.
-             if (!empty($data['rent_amount']) && !Validator::validatePositiveNumber($data['rent_amount'])) {
-                  $data['phone_err'] = $data['phone_err'] . ' (قيمة الإيجار يجب أن تكون رقم موجب)'; // Hacky but works without changing view structure too much
-             }
 
-             if (empty($data['name_err']) && empty($data['phone_err'])) {
+             if (empty($data['rent_amount']))
+                {
+                     $data['rent_err']="ادخل قيمة الاجار الشهري ";
+                }elseif(!Validator::validatePositiveNumber($data['rent_amount']))
+                {
+                 $data['rent_err'] ='المبلغ يجب أن يكون اكثر من 0 ريال '; // Hacky but works without changing view structure too much
+                }
+
+             if (empty($data['name_err']) && empty($data['phone_err']) && empty ($data['rent_err'])) {
+                 // Server-side: ensure apartment is still vacant
+                 $apt = $this->apartmentModel->getApartmentById($data['apartment_id']);
+                 if (!$apt || (isset($apt->status) && $apt->status !== 'vacant')) {
+                     $data['name_err'] = 'الشقة غير متاحة';
+                     $vacantApartments = $this->apartmentModel->getVacantApartments();
+                     $data['vacant_apartments'] = $vacantApartments;
+                     $this->view('tenants/add', $data);
+                     return;
+                 }
+
                  if ($this->tenantModel->addTenant($data)) {
                      // Update apartment status to occupied
-                     $apt = $this->apartmentModel->getApartmentById($data['apartment_id']);
                      $aptData = [
                          'id' => $data['apartment_id'],
                          'apartment_number' => $apt->apartment_number,
@@ -112,11 +128,36 @@ class TenantsController extends Controller {
     }
 
     public function delete($id) {
-        if ($this->tenantModel->deleteTenant($id)) {
-            Session::flash('tenant_msg', 'تم حذف المستأجر بنجاح');
+        // Terminate tenant contract (soft)
+        $tenant = $this->tenantModel->getTenantById($id);
+        if (!$tenant) {
+            die('المستأجر غير موجود');
+        }
+
+        if (isset($tenant->status) && $tenant->status !== 'active') {
+            die('العقد منتهي بالفعل');
+        }
+
+        if ($this->tenantModel->terminateTenant($id)) {
+            // If tenant had an apartment, mark it as vacant
+            if (!empty($tenant->apartment_id)) {
+                $apt = $this->apartmentModel->getApartmentById($tenant->apartment_id);
+                if ($apt) {
+                    $aptData = [
+                        'id' => $apt->id,
+                        'apartment_number' => $apt->apartment_number,
+                        'floor' => $apt->floor,
+                        'status' => 'vacant',
+                        'notes' => $apt->notes
+                    ];
+                    $this->apartmentModel->updateApartment($aptData);
+                }
+            }
+
+            Session::flash('tenant_msg', 'تم إنهاء عقد المستأجر بنجاح');
             $this->redirect('tenants');
         } else {
-             die('خطأ في الحذف');
+             die('خطأ في إنهاء العقد');
         }
     }
 }

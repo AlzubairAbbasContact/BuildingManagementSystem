@@ -21,7 +21,7 @@
 
                 <div class="form-group">
                     <label>المبلغ المدفوع</label>
-                    <input type="number" name="amount_paid" class="form-control <?php echo (!empty($data['amount_paid_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['amount_paid']; ?>" min="1" required>
+                    <input type="text" name="amount_paid" class="form-control <?php echo (!empty($data['amount_paid_err'])) ? 'is-invalid' : ''; ?>" value="<?php echo $data['amount_paid']; ?>"  required>
                     <span class="invalid-feedback"><?php echo $data['amount_paid_err']; ?></span>
                     <small class="text-muted">سيتم حساب المتبقي تلقائياً بناءً على إيجار المستأجر.</small>
                 </div>

@@ -13,6 +13,16 @@ class Tenant extends Model {
         return $this->db->resultSet();
     }
 
+    // Return only active tenants
+    public function getActiveTenants() {
+        $this->db->query('SELECT tenants.*, apartments.apartment_number, apartments.floor 
+                          FROM tenants 
+                          JOIN apartments ON tenants.apartment_id = apartments.id 
+                          WHERE tenants.status = "active"
+                          ORDER BY tenants.created_at DESC');
+        return $this->db->resultSet();
+    }
+
     public function getTenantById($id) {
         $this->db->query('SELECT * FROM tenants WHERE id = :id');
         $this->db->bind(':id', $id);
@@ -47,13 +57,27 @@ class Tenant extends Model {
     }
 
     public function deleteTenant($id) {
-        $this->db->query('DELETE FROM tenants WHERE id = :id');
+        // Maintain backwards compatibility: perform a soft termination instead of hard delete
+        return $this->terminateTenant($id);
+    }
+
+    // Soft-terminate tenant (preserve history)
+    public function terminateTenant($id) {
+        $this->db->query('UPDATE tenants SET status = "inactive" WHERE id = :id');
         $this->db->bind(':id', $id);
         return $this->db->execute();
     }
 
     public function countTenants() {
-        $this->db->query('SELECT COUNT(*) as count FROM tenants');
+        $this->db->query('SELECT COUNT(*) as count FROM tenants WHERE status = "active"');
+        $row = $this->db->single();
+        return $row->count;
+    }
+
+    // Count active tenants for a given apartment
+    public function countActiveByApartment($apartment_id) {
+        $this->db->query('SELECT COUNT(*) as count FROM tenants WHERE apartment_id = :apid AND status = "active"');
+        $this->db->bind(':apid', $apartment_id);
         $row = $this->db->single();
         return $row->count;
     }
