@@ -29,7 +29,7 @@
                 <div class="form-group">
                     <input type="submit" value="إلغاء الدفعة" class="btn btn-danger btn-block">
                 </div>
-                <a href="<?php echo URL_ROOT; ?>/payments" class="btn btn-block" style="background:#7f8c8d;">إلغاء</a>
+                <a href="<?php echo URL_ROOT; ?>/payments" class="btn btn-block" style="background:#7f8c8d; width: 90%">إلغاء</a>
             </form>
         </div>
     </div>

@@ -57,16 +57,6 @@ class TenantsController extends Controller {
                  $data['phone_err'] = 'رقم الهاتف غير صحيح';
              }
              
-             // Rent Amount Validation (Assuming new error field or just preventing add with die/flash? Better add error field in next step if not exists)
-             // But existing code only has name_err and phone_err.
-             // I should be careful not to break view if view doesn't display validaiton for rent.
-             // The view 'tenants/add' does NOT have rent_err.
-             // I will add basic check: if rent is invalid, add to name_err or global error or just fail validation.
-             // Ideally, I should update the VIEW as well.
-             // For now, let's validate and if invalid, attach to name_err temporarily or add new logic.
-             // Let's stick strictly to user request: "Check all these things".
-             // I'll add validation logic.
-
              if (empty($data['rent_amount']))
                 {
                      $data['rent_err']="ادخل قيمة الاجار الشهري ";

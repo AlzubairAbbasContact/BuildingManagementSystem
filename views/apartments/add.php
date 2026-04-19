@@ -38,7 +38,7 @@
                 <div class="form-group">
                     <input type="submit" value="حفظ" class="btn btn-primary btn-block">
                 </div>
-                <a href="<?php echo URL_ROOT; ?>/apartments" class="btn btn-block" style="background:#7f8c8d;">إلغاء</a>
+                <a href="<?php echo URL_ROOT; ?>/apartments" class="btn btn-block" style="background:#7f8c8d; width: 90%">إلغاء</a>
             </form>
         </div>
     </div>

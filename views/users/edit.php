@@ -42,7 +42,7 @@
                 <div class="form-group">
                     <input type="submit" value="حفظ التعديلات" class="btn btn-primary btn-block">
                 </div>
-                <a href="<?php echo URL_ROOT; ?>/users" class="btn btn-block" style="background:#7f8c8d;">إلغاء</a>
+                <a href="<?php echo URL_ROOT; ?>/users" class="btn btn-block" style="background:#7f8c8d; width: 90%">إلغاء</a>
             </form>
         </div>
     </div>
